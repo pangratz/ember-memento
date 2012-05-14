@@ -1,4 +1,4 @@
-Ember-Memento
+Ember-Memento [![Build Status](https://secure.travis-ci.org/pangratz/ember-memento.png)](http://travis-ci.org/pangratz/ember-memento)
 ==============
 
 A mixin for Ember.js which adds undo/redo functionality to `Ember.Object`'s.
