@@ -18,7 +18,7 @@ module("ember-memento", {
 
 test("Memento is defined",
 function() {
-    ok(typeof Memento !== undefined, "Memento is undefined");
+    ok(typeof Memento !== undefined, "Memento is defined");
 });
 
 test("it works with string properties",
