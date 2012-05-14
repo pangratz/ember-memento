@@ -66,8 +66,6 @@ input 'app' do
     concat %w[
       vendor/jquery.js
       vendor/ember.js
-      vendor/ember-data.js
-      vendor/sproutcore-routing.js
     ], 'app.js'
   end
 
