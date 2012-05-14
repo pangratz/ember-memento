@@ -5,6 +5,8 @@ gem 'colored'
 gem 'guard'
 gem 'guard-rake'
 
+gem 'kicker'
+
 gem 'rack'
 gem 'rack-rewrite'
 # gem 'rack-streaming-proxy'
