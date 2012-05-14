@@ -1,7 +1,7 @@
 require('jquery');
 require('ember');
 
-require('ember-skeleton/core');
+require('ember-skeleton/memento');
 
 var get = Ember.get;
 var set = Ember.set;
