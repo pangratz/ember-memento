@@ -14,11 +14,11 @@ Use it in your objects which shall offer the functionality like this, see [JSFid
 
 ```javascript
 var myObj = Ember.Object.create(Ember.Memento, {
-	// properties which are "tracked"
-	mementoProperties: 'firstName age'.w(),
-	
-	firstName: 'Buster',
-	age: 78
+  // properties which are "tracked"
+  mementoProperties: 'firstName age'.w(),
+  
+  firstName: 'Buster',
+  age: 78
 });
 
 myObj.set('firstName', 'Michael');
