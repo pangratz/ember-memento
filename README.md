@@ -31,6 +31,11 @@ myObj.redo(); // firstName = Michael, age 78
 myObj.redo(); // firstName = Michael, age 100
 ```
 
+Development
+-----------
+
+The mixin is located at [`app/lib/memento.js`](https://github.com/pangratz/ember-memento/blob/master/app/lib/memento.js) and the corresponding tests are at `app/tests/`.
+
 Test
 ----
 
