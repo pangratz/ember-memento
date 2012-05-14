@@ -32,7 +32,8 @@ myObj.undo(); // firstName = Buster, age 78, tags = [cool, great]
 
 myObj.redo(); // firstName = Buster, age 78, tags = [cool, great, super]
 myObj.redo(); // firstName = Michael, age 78, tags = [cool, great, super]
-myObj.redo(); // firstName = Michael, age 100, tags = [cool, great, super]​​​```
+myObj.redo(); // firstName = Michael, age 100, tags = [cool, great, super]
+```
 
 Development
 -----------
