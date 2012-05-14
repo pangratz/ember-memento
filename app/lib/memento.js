@@ -80,13 +80,13 @@ Ember.Memento = Ember.Mixin.create({
     // temporarily save the value which will be changed
     _beforePropertyChange: function(obj, propName) {
         var val = Ember.get(obj, propName);
-        this.set('beforeValue', val);
+        this.set('_beforeValue', val);
     },
 
     // invoked when a "normal" property has been changed
     _propertyChanged: function(obj, propName) {
         var val = Ember.get(obj, propName);
-        var beforeValue = Ember.get(this, 'beforeValue');
+        var beforeValue = Ember.get(this, '_beforeValue');
         this._addHistory({
             undoDescription: 'set %@ to "%@"'.fmt(propName, beforeValue),
             redoDescription: 'set %@ to %@'.fmt(propName, val),
