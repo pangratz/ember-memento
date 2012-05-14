@@ -5,12 +5,6 @@ Ember.Memento = Ember.Mixin.create({
     // current history index
     mementoIndex: -1,
 
-    log: function() {
-        this.get('memento').forEach(function(item) {
-            console.log(item.undoDescription);
-        });
-    },
-
     _addHistory: function(history) {
         /**
          * since _addHistory is invoked on every property change,
