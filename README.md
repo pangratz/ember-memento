@@ -8,7 +8,9 @@ Usage
 
 Add the mixin, located in `app/lib/memento.js` to your project.
 
-Use it in your objects which shall offer the functionality:
+The mixin works with properties of type 'string', 'number', 'boolean' and 'array'.
+
+Use it in your objects which shall offer the functionality like this, see [JSFiddle](http://jsfiddle.net/pangratz666/Dbvhe/):
 
 ```javascript
 var myObj = Ember.Object.create(Ember.Memento, {
