@@ -1,9 +1,9 @@
 Ember.Memento = Ember.Mixin.create({
     // holds all history items
-    memento: [],
+    _memento: [],
 
     // current history index
-    mementoIndex: -1,
+    _mementoIndex: -1,
 
     _addHistory: function(history) {
         /**
@@ -17,16 +17,16 @@ Ember.Memento = Ember.Mixin.create({
              * back in time via "undo". if so, we delete all history items
              * after the current one
              */
-            var mementoIndex = this.get('mementoIndex');
-            var lastIndex = this.getPath('memento.length') - 1;
+            var mementoIndex = this.get('_mementoIndex');
+            var lastIndex = this.getPath('_memento.length') - 1;
             var diff = lastIndex - mementoIndex;
             if (mementoIndex !== lastIndex && diff !== 0) {
-                this.get('memento').replace(mementoIndex + 1, lastIndex - mementoIndex);
+                this.get('_memento').replace(mementoIndex + 1, lastIndex - mementoIndex);
             }
 
             // add new history item and increase current history index
-            this.get('memento').pushObject(history);
-            this.incrementProperty('mementoIndex');
+            this.get('_memento').pushObject(history);
+            this.incrementProperty('_mementoIndex');
         }
     },
 
@@ -36,11 +36,11 @@ Ember.Memento = Ember.Mixin.create({
     undo: function() {
         this.set('_isUndo', true);
         // check if we can go back in time
-        var mementoIndex = this.get('mementoIndex');
+        var mementoIndex = this.get('_mementoIndex');
         if (mementoIndex >= 0) {
-            var historyItem = this.get('memento').objectAt(mementoIndex);
+            var historyItem = this.get('_memento').objectAt(mementoIndex);
             historyItem.undo();
-            this.decrementProperty('mementoIndex');
+            this.decrementProperty('_mementoIndex');
         }
         this.set('_isUndo', false);
     },
@@ -51,11 +51,11 @@ Ember.Memento = Ember.Mixin.create({
     redo: function() {
         this.set('_isUndo', true);
         // check if we can do a step into future
-        var mementoIndex = this.get('mementoIndex');
-        var historyLength = this.getPath('memento.length');
+        var mementoIndex = this.get('_mementoIndex');
+        var historyLength = this.getPath('_memento.length');
         if (mementoIndex < historyLength - 1) {
-            mementoIndex = this.incrementProperty('mementoIndex');
-            var historyItem = this.get('memento').objectAt(mementoIndex);
+            mementoIndex = this.incrementProperty('_mementoIndex');
+            var historyItem = this.get('_memento').objectAt(mementoIndex);
             historyItem.redo();
         }
         this.set('_isUndo', false);
