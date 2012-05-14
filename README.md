@@ -44,6 +44,10 @@ You can test the mixin via:
     $ bundle install 
     $ bundle exec rake test
 
+Or if you're on a Mac, via:
+
+    $ bundle exec rake autotest
+
 This executes the tests by using [Phantom.JS](http://www.phantomjs.org/), which you need to have installed.
 
 Or you can run the tests via:
