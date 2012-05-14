@@ -15,21 +15,24 @@ Use it in your objects which shall offer the functionality like this, see [JSFid
 ```javascript
 var myObj = Ember.Object.create(Ember.Memento, {
   // properties which are "tracked"
-  mementoProperties: 'firstName age'.w(),
-  
+  mementoProperties: 'firstName age tags'.w(),
+
+  tags: ['cool', 'great'],
   firstName: 'Buster',
   age: 78
 });
 
+myObj.get('tags').pushObject('super');
 myObj.set('firstName', 'Michael');
 myObj.set('age', 100);
 
-myObj.undo(); // firstName = Michael, age = 78
-myObj.undo(); // firstName = Buster, age 78
+myObj.undo(); // firstName = Michael, age = 78, tags = [cool, great, super]
+myObj.undo(); // firstName = Buster, age 78, tags = [cool, great, super]
+myObj.undo(); // firstName = Buster, age 78, tags = [cool, great]
 
-myObj.redo(); // firstName = Michael, age 78
-myObj.redo(); // firstName = Michael, age 100
-```
+myObj.redo(); // firstName = Buster, age 78, tags = [cool, great, super]
+myObj.redo(); // firstName = Michael, age 78, tags = [cool, great, super]
+myObj.redo(); // firstName = Michael, age 100, tags = [cool, great, super]​​​```
 
 Development
 -----------
