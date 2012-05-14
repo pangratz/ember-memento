@@ -1,4 +1,4 @@
-APPNAME = 'ember-skeleton'
+APPNAME = 'ember-memento'
 
 require 'json'
 require 'rake-pipeline-web-filters'

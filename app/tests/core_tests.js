@@ -1,7 +1,7 @@
 require('jquery');
 require('ember');
 
-require('ember-skeleton/memento');
+require('ember-memento/memento');
 
 var get = Ember.get;
 var set = Ember.set;
@@ -18,12 +18,12 @@ module("ember-memento", {
 
 test("Memento is defined",
 function() {
-    ok(typeof Memento !== undefined, "Memento is defined");
+    ok(typeof Ember.Memento !== undefined, "Memento is defined");
 });
 
 test("it works with string properties",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'name'.w(),
 
         name: 'hansi'
@@ -49,7 +49,7 @@ function() {
 
 test("it works with number properties",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'age'.w(),
 
         age: 10
@@ -75,7 +75,7 @@ function() {
 
 test("it works with array properties",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'array'.w(),
 
         array: []
@@ -101,7 +101,7 @@ function() {
 
 test("it works with array#pushObjects",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'array'.w(),
 
         array: []
@@ -125,7 +125,7 @@ function() {
 
 test("it works with array#popObject",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'array'.w(),
 
         array: [1, 2]
@@ -149,7 +149,7 @@ function() {
 
 test("it works with multiple properties",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'str bool num arr'.w(),
 
         str: 'string',
@@ -228,7 +228,7 @@ function() {
 
 test("it allows rewriting of history",
 function() {
-    obj = Ember.Object.create(Memento, {
+    obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'str'.w(),
 
         str: 'a'
@@ -263,4 +263,37 @@ function() {
 
     obj.redo();
     equal(get(obj, 'str'), 'e');
+});
+
+test("it only works with properties defined in mementoProperties",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'a',
+        otherStr: 'hello'
+    });
+
+    equal(get(obj, 'str'), 'a');
+    equal(get(obj, 'otherStr'), 'hello');
+
+    obj.set('str', 'b');
+
+    equal(get(obj, 'str'), 'b');
+    equal(get(obj, 'otherStr'), 'hello');
+
+    obj.set('otherStr', 'hello world');
+
+    equal(get(obj, 'str'), 'b');
+    equal(get(obj, 'otherStr'), 'hello world');
+
+    obj.undo();
+
+    equal(get(obj, 'str'), 'a');
+    equal(get(obj, 'otherStr'), 'hello world');
+
+    obj.redo();
+
+    equal(get(obj, 'str'), 'b');
+    equal(get(obj, 'otherStr'), 'hello world');
 });

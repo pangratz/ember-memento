@@ -1,4 +1,4 @@
-APPNAME = 'ember-skeleton'
+APPNAME = 'ember-memento'
 
 require 'colored'
 require 'rake-pipeline'

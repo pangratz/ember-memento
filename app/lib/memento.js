@@ -1,4 +1,4 @@
-Memento = Ember.Mixin.create({
+Ember.Memento = Ember.Mixin.create({
     // holds all history items
     memento: [],
 
