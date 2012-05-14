@@ -22,7 +22,7 @@ var myObj = Ember.Object.create(Ember.Memento, {
 myObj.set('firstName', 'Michael');
 myObj.set('age', 100);
 
-myObj.undo(); // firstName = Buster, age = 100
+myObj.undo(); // firstName = Michael, age = 78
 myObj.undo(); // firstName = Buster, age 78
 
 myObj.redo(); // firstName = Michael, age 78
