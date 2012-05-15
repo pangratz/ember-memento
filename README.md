@@ -35,6 +35,36 @@ myObj.redo(); // firstName = Michael, age 78, tags = [cool, great, super]
 myObj.redo(); // firstName = Michael, age 100, tags = [cool, great, super]
 ```
 
+You can clear the history by invoking the `clearHistory` method. You can specify the amount of history items which shall be kept:
+
+```javascript
+var myObj = Ember.Object.create(Ember.Memento, {
+  mementoProperties: ['name'],
+
+  name: 'Tobias'
+});
+
+myObj.set('name', 'Tobias Fünke');
+myObj.set('name', 'Nelly');
+
+myObj.clearHistory(1);
+myObj.get('name'); // Nelly
+
+myObj.undo();
+myObj.get('name'); // Tobias Fünke
+
+// no history beyond this ...
+myObj.undo();
+myObj.get('name'); // Tobias Fünke
+
+myObj.redo(); // name === Nelly
+
+myObj.clearHistory(); // clear the whole history
+
+myObj.undo();
+myObj.get('name'); // Nelly
+```
+
 Development
 -----------
 
