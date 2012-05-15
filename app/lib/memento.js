@@ -2,7 +2,11 @@ Ember.Memento = Ember.Mixin.create({
     // holds all history items
     _memento: [],
 
-    // current history index
+    /**
+    * current history index; the item in _memento at the _mementoIndex
+    * represents the past, everything on the right of
+    * _mementoIndex represents the future
+    */
     _mementoIndex: -1,
 
     _addHistory: function(history) {
@@ -12,21 +16,45 @@ Ember.Memento = Ember.Mixin.create({
          * a "undo" or "redo", and if so, we don't add another history item
          */
         if (!this.get('_isUndo')) {
-            /**
-             * check if a value has been changed while we have gone
-             * back in time via "undo". if so, we delete all history items
-             * after the current one
-             */
-            var mementoIndex = this.get('_mementoIndex');
-            var lastIndex = this.getPath('_memento.length') - 1;
-            var diff = lastIndex - mementoIndex;
-            if (mementoIndex !== lastIndex && diff !== 0) {
-                this.get('_memento').replace(mementoIndex + 1, lastIndex - mementoIndex);
-            }
+            // Since we are adding a new history, clear future first
+            this._clearFuture();
 
             // add new history item and increase current history index
             this.get('_memento').pushObject(history);
             this.incrementProperty('_mementoIndex');
+        }
+    },
+
+    clearHistory: function(count) {
+        // clear everything if there is no count
+        if (!count) {
+            this.get('_memento').clear();
+            this.set('_mementoIndex', -1);
+            return;
+        }
+
+        // ignore negative count
+        if (count <= 0) {
+            return;
+        }
+
+        // clear the future
+        this._clearFuture();
+
+        // clear history except last "count" items
+        var mementoIndex = this.get('_mementoIndex');
+        count = Math.min(count, mementoIndex + 1);
+        var removeCount = mementoIndex - count + 1;
+        this.get('_memento').replace(0, removeCount);
+        this.set('_mementoIndex', count - 1);
+    },
+
+    _clearFuture: function() {
+        var mementoIndex = this.get('_mementoIndex');
+        var lastIndex = this.getPath('_memento.length') - 1;
+        var diff = lastIndex - mementoIndex;
+        if (mementoIndex !== lastIndex && diff >= 0) {
+            this.get('_memento').replace(mementoIndex + 1, diff);
         }
     },
 

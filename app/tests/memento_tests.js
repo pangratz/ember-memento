@@ -7,13 +7,15 @@ var get = Ember.get;
 var set = Ember.set;
 var obj;
 
-module("ember-memento", {
-    teardown: function() {
-        if (obj) {
-            obj.destroy();
-            obj = null;
-        }
+var cleanObj = function() {
+    if (obj) {
+        obj.destroy();
+        obj = null;
     }
+};
+
+module("ember-memento", {
+    teardown: cleanObj
 });
 
 test("Memento is defined",
@@ -353,4 +355,156 @@ function() {
 
     equal(get(firstArray, 'hasArrayObservers'), false, 'firstArray has no array observers');
     equal(get(secondArray, 'hasArrayObservers'), false, 'secondArray has no array observers');
+});
+
+module("clearHistory", {
+    teardown: cleanObj
+});
+
+test("it clears the whole history",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    equal(get(obj, 'str'), 'frozen banana');
+
+    set(obj, 'str', 'Frozen Banana');
+    equal(get(obj, 'str'), 'Frozen Banana');
+
+    obj.clearHistory();
+    equal(get(obj, 'str'), 'Frozen Banana', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'undo does not change the property since history is cleared');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'redo does not change the property since history is cleared');
+});
+
+test("it clears the whole history, even when gone back in time",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    equal(get(obj, 'str'), 'frozen banana');
+
+    set(obj, 'str', 'Frozen Banana');
+    equal(get(obj, 'str'), 'Frozen Banana');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana');
+
+    obj.clearHistory();
+    equal(get(obj, 'str'), 'frozen banana', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'undo does not change the property since history is cleared');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'frozen banana', 'redo does not change the property since history is cleared');
+});
+
+test("count parameter specifies how many past items shall be kept",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    set(obj, 'str', 'Frozen Banana');
+    equal(get(obj, 'str'), 'Frozen Banana');
+
+    obj.clearHistory(1);
+    equal(get(obj, 'str'), 'Frozen Banana', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'undo works as expected');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'redo works as expected');
+});
+
+test("a negative count parameter does not clear the history",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    set(obj, 'str', 'Frozen Banana');
+    equal(get(obj, 'str'), 'Frozen Banana');
+
+    obj.clearHistory( - 1);
+    equal(get(obj, 'str'), 'Frozen Banana', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen', 'undo works as expected');
+});
+
+test("a too large count parameter works",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    set(obj, 'str', 'Frozen Banana');
+    equal(get(obj, 'str'), 'Frozen Banana');
+
+    obj.clearHistory(5);
+    equal(get(obj, 'str'), 'Frozen Banana', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen', 'undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen', 'undo works as expected');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'frozen banana', 'redo works as expected');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'redo works as expected');
+});
+
+
+test("clearHistory works when no history is available",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    obj.clearHistory();
+    equal(get(obj, 'str'), 'frozen', 'clearHistory does not affect property');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen', 'undo works as expected');
+
+    obj.redo();
+    equal(get(obj, 'str'), 'frozen', 'undo works as expected');
 });
