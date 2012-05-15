@@ -298,7 +298,7 @@ function() {
     equal(get(obj, 'otherStr'), 'hello world');
 });
 
-test("it works when an array is reset",
+test("it works when a new array is set",
 function() {
     obj = Ember.Object.create(Ember.Memento, {
         mementoProperties: 'arr'.w(),
