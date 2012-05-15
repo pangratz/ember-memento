@@ -357,6 +357,67 @@ function() {
     equal(get(secondArray, 'hasArrayObservers'), false, 'secondArray has no array observers');
 });
 
+test("it works with boolean property which is not set on create",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'bool'.w()
+    });
+
+    ok(!get(obj, 'bool'), 'precond - bool is not defined');
+
+    set(obj, 'bool', true);
+    equal(get(obj, 'bool'), true, 'bool is true');
+
+    obj.undo();
+    ok(!get(obj, 'bool'), 'bool is not defined after undo');
+});
+
+test("it works with string property which is not set on create",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w()
+    });
+
+    ok(!get(obj, 'str'), 'precond - str is not defined');
+
+    set(obj, 'str', 'hello');
+    equal(get(obj, 'str'), 'hello', 'str is defined');
+
+    obj.undo();
+    ok(!get(obj, 'str'), 'str is not defined after undo');
+});
+
+test("it works with number property which is not set on create",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'num'.w()
+    });
+
+    ok(!get(obj, 'num'), 'precond - num is not defined');
+
+    set(obj, 'num', 42);
+    equal(get(obj, 'num'), 42, 'num is defined');
+
+    obj.undo();
+    ok(!get(obj, 'num'), 'num is not defined after undo');
+});
+
+test("it works with array property which is not set on create",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'arr'.w()
+    });
+
+    ok(!get(obj, 'arr'), 'precond - arr is not defined');
+
+    set(obj, 'arr', [1, 2, 3]);
+    deepEqual(get(obj, 'arr'), [1, 2, 3], 'arr is defined');
+
+    obj.undo();
+    ok(!get(obj, 'arr'), 'arr is not defined after undo');
+});
+
+
 module("clearHistory", {
     teardown: cleanObj
 });
