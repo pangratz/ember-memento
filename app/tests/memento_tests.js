@@ -297,3 +297,60 @@ function() {
     equal(get(obj, 'str'), 'b');
     equal(get(obj, 'otherStr'), 'hello world');
 });
+
+test("it works when an array is reset",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'arr'.w(),
+
+        arr: [1, 2, 3]
+    });
+
+    obj.get('arr').pushObject(4);
+    deepEqual(get(obj, 'arr'), [1, 2, 3, 4], 'precond - array pushObject works');
+    obj.undo();
+    deepEqual(get(obj, 'arr'), [1, 2, 3], 'precond - undo on array works');
+
+    // reset to new array
+    obj.set('arr', []);
+    deepEqual(get(obj, 'arr'), [], 'new array is set');
+
+    obj.undo();
+    deepEqual(get(obj, 'arr'), [1, 2, 3], 'undo works with newly set array');
+
+    obj.redo();
+    deepEqual(get(obj, 'arr'), [], 'redo works with newly set array');
+
+    get(obj, 'arr').pushObjects(['a', 'b']);
+    deepEqual(get(obj, 'arr'), ['a', 'b'], 'array operations work on newly set array');
+
+    obj.undo();
+    deepEqual(get(obj, 'arr'), [], 'undo works with newly set array');
+
+    obj.redo();
+    deepEqual(get(obj, 'arr'), ['a', 'b'], 'redo works with newly set array');
+});
+
+test("it removes itself as listener on arrays which are replaced",
+function() {
+    var firstArray = [1, 2, 3];
+    var secondArray = ['a', 'b'];
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'arr'.w(),
+
+        arr: firstArray
+    });
+
+    equal(get(firstArray, 'hasArrayObservers'), true, 'precond - firstArray has array observers');
+    equal(get(secondArray, 'hasArrayObservers'), false, 'precond - secondArray has no array observers');
+
+    obj.set('arr', secondArray);
+
+    equal(get(firstArray, 'hasArrayObservers'), false, 'firstArray has no array observers');
+    equal(get(secondArray, 'hasArrayObservers'), true, 'secondArray has array observers');
+
+    set(obj, 'arr', []);
+
+    equal(get(firstArray, 'hasArrayObservers'), false, 'firstArray has no array observers');
+    equal(get(secondArray, 'hasArrayObservers'), false, 'secondArray has no array observers');
+});

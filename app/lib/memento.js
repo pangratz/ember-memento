@@ -66,12 +66,13 @@ Ember.Memento = Ember.Mixin.create({
         var props = this.get('mementoProperties');
         props.forEach(function(item) {
             var prop = Ember.get(this, item);
+
+            Ember.addBeforeObserver(this, item, this, '_beforePropertyChange');
+            Ember.addObserver(this, item, this, '_propertyChanged');
+
             // check if the property is an array
             if (Ember.typeOf(prop) === 'array') {
                 prop.addArrayObserver(this);
-            } else {
-                Ember.addBeforeObserver(this, item, this, '_beforePropertyChange');
-                Ember.addObserver(this, item, this, '_propertyChanged');
             }
         },
         this);
@@ -81,11 +82,22 @@ Ember.Memento = Ember.Mixin.create({
     _beforePropertyChange: function(obj, propName) {
         var val = Ember.get(obj, propName);
         this.set('_beforeValue', val);
+
+        // check if the property is an array
+        if (Ember.typeOf(val) === 'array') {
+            val.removeArrayObserver(this);
+        }
     },
 
     // invoked when a "normal" property has been changed
     _propertyChanged: function(obj, propName) {
         var val = Ember.get(obj, propName);
+
+        // check if the property is an array
+        if (Ember.typeOf(val) === 'array') {
+            val.addArrayObserver(this);
+        }
+
         var beforeValue = Ember.get(this, '_beforeValue');
         this._addHistory({
             undoDescription: 'set %@ to "%@"'.fmt(propName, beforeValue),
