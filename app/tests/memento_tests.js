@@ -569,3 +569,65 @@ function() {
     obj.redo();
     equal(get(obj, 'str'), 'frozen', 'undo works as expected');
 });
+
+module("mementoSize", {
+    teardown: cleanObj
+});
+
+test("limits the amount of history items",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+        mementoSize: 2,
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    set(obj, 'str', 'Frozen Banana');
+    set(obj, 'str', 'Brozen Fanana');
+    equal(get(obj, 'str'), 'Brozen Fanana');
+
+    // since mementoSize is 2, we can invoke undo 2 times
+    obj.undo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'first undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'second undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen banana', 'since mementoSize is 2, we can\' go further back in time');
+});
+
+test("updates when mementoSize changes",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    set(obj, 'str', 'frozen banana');
+    set(obj, 'str', 'Frozen Banana');
+    set(obj, 'str', 'Brozen Fanana');
+    equal(get(obj, 'str'), 'Brozen Fanana');
+
+    obj.undo();
+    obj.undo();
+    obj.undo();
+    equal(get(obj, 'str'), 'frozen', 'precond - undefined mementoSize doesn\'t restrict the amount of history items');
+
+    obj.redo();
+    obj.redo();
+    obj.redo();
+    equal(get(obj, 'str'), 'Brozen Fanana');
+
+    set(obj, 'mementoSize', 1);
+
+    obj.undo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'undo works as expected');
+
+    obj.undo();
+    equal(get(obj, 'str'), 'Frozen Banana', 'newly set mementoSize is respected');
+});
+

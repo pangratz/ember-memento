@@ -9,6 +9,17 @@ Ember.Memento = Ember.Mixin.create({
     */
     _mementoIndex: -1,
 
+    _mementoSizeChanged: function() {
+        this._updateMemento();
+    }.observes('mementoSize'),
+
+    _updateMemento: function() {
+        var mementoSize = this.get('mementoSize');
+        if (mementoSize && mementoSize > 0) {
+            this.clearHistory(mementoSize);
+        }
+    },
+
     _addHistory: function(history) {
         /**
          * since _addHistory is invoked on every property change,
@@ -22,6 +33,8 @@ Ember.Memento = Ember.Mixin.create({
             // add new history item and increase current history index
             this.get('_memento').pushObject(history);
             this.incrementProperty('_mementoIndex');
+
+            this._updateMemento();
         }
     },
 
