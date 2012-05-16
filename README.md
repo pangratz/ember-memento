@@ -14,8 +14,80 @@ Use it in your objects which shall offer the functionality like this, see [JSFid
 
 ```javascript
 var obj = Ember.Object.create(Ember.Memento, {
-    mementoProperties: 'firstName lastName age tags'
+    // array of properties which shall be considered in undo/redo
+    mementoProperties: 'firstName lastName age tags',
+
+    // limit to 2 history states - there is no limit by default
+    mementoSize: 2,
+
+    firstName: 'Buster',
+    age: 35,
+    tags: ['brother', 'cartographer']
 });
+
+// firstName = 'Buster', lastName = undefined, age = 35, tags = ['brother', 'cartographer']
+obj.getProperties('firstName lastName age tags'.w());
+
+obj.set('lastName', 'Bluth');
+obj.get('tags').pushObject('step-brother');
+obj.set('firstName', 'Baby Buster');
+
+// firstName = 'Baby Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// undo last change of firstName
+obj.undo();
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// undo last change of adding 'step-brother' to tags array
+obj.undo();
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer']
+obj.getProperties('firstName lastName age tags'.w());
+
+// invoke undo one more time; this doesn't change anything since we specified mementoSize = 2
+obj.undo();
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer']
+obj.getProperties('firstName lastName age tags'.w());
+
+// redo change and add 'step-brother'
+obj.redo();
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// redo change to firstName
+obj.redo();
+
+// firstName = 'Baby Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// compact history and only keep 1 item
+obj.clearHistory(1);
+
+obj.undo(); // changes firstName to 'Buster'
+obj.undo(); // does nothing since there are no more history items
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// update multiple properties at once, but create only 1 histroy item
+obj.updateProperties({
+    firstName: 'Hey Brother Buster',
+    age: 42
+});
+
+// firstName = 'Hey Brother Buster', lastName = 'Bluth', age = 42, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
+
+// undo last change
+obj.undo();
+
+// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['brother', 'cartographer', 'step-brother']
+obj.getProperties('firstName lastName age tags'.w());
 ```
 
 Development
