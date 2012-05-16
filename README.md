@@ -7,7 +7,7 @@ Added functionality to an object with the `Ember.Memento` mixin:
 
 * [undo](#undo) and [redo](#redo) functionality
 * mementoSize to limit amount of saved history states
-* [clearHistory](#clearHistory) to clear history and optionally keep a given amount of states
+* [clearHistory](#clearhistory) to clear history and optionally keep a given amount of states
 
 Usage
 -----
