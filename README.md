@@ -132,8 +132,6 @@ obj.undo(); // does nothing since there are no more history items
 #### updateProperties
 
 To change multiple properties and only add 1 history item, use the `updateProperties` method:
-obj.set('firstName', 'Buster');
-obj.set('age', 100);
 
 ```javascript
 obj.set('firstName', 'Buster');
