@@ -505,6 +505,136 @@ function() {
     deepEqual(get(obj, 'array'), [1, 2, 3], 'redo changes array');
 });
 
+module("undoCount AND redoCount", {
+    teardown: cleanObj
+});
+
+test("are initially 0",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'hansi'
+    });
+
+    equal(get(obj, 'undoCount'), 0, 'undoCount is initially 0');
+    equal(get(obj, 'redoCount'), 0, 'redoCount is initially 0');
+});
+
+test("change when a property is set",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+        str: 'hansi'
+    });
+
+    equal(get(obj, 'undoCount'), 0, 'precond - undoCount is initially 0');
+    equal(get(obj, 'redoCount'), 0, 'precond - redoCount is initially 0');
+
+    set(obj, 'str', 'frozen banana');
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is 1 when a undo can be done');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+});
+
+test("change when a undo is done",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+        str: 'hansi'
+    });
+
+    equal(get(obj, 'undoCount'), 0, 'precond - undoCount is initially 0');
+    equal(get(obj, 'redoCount'), 0, 'precond - redoCount is initially 0');
+
+    set(obj, 'str', 'frozen banana');
+
+    equal(get(obj, 'undoCount'), 1, 'precond - undoCount is 1 when a undo can be done');
+    equal(get(obj, 'redoCount'), 0, 'precond - redoCount stays 0');
+
+    obj.undo();
+
+    equal(get(obj, 'undoCount'), 0, 'undoCount is 0 after an undo');
+    equal(get(obj, 'redoCount'), 1, 'redoCount is 1 after an undo');
+});
+
+test("complex example",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+        str: 'hansi'
+    });
+
+    equal(get(obj, 'undoCount'), 0, 'precond - undoCount is initially 0');
+    equal(get(obj, 'redoCount'), 0, 'precond - redoCount is initially 0');
+
+    set(obj, 'str', 'frozen banana');
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is 1 when a undo can be done');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+
+    set(obj, 'str', 'hubert');
+
+    equal(get(obj, 'undoCount'), 2, 'undoCount is increased when a property changes');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+
+    obj.undo();
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is 1 after an undo');
+    equal(get(obj, 'redoCount'), 1, 'redoCount is 1 after an undo');
+
+    obj.undo();
+
+    equal(get(obj, 'undoCount'), 0, 'undoCount is 0 after an undo');
+    equal(get(obj, 'redoCount'), 2, 'redoCount is 2 after an undo');
+
+    obj.undo();
+
+    equal(get(obj, 'undoCount'), 0, 'undoCount is 0 after an undo');
+    equal(get(obj, 'redoCount'), 2, 'redoCount is 2 after an undo');
+
+    obj.redo();
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is 1 after an undo');
+    equal(get(obj, 'redoCount'), 1, 'redoCount is 1 after an undo');
+
+    obj.redo();
+
+    equal(get(obj, 'undoCount'), 2, 'undoCount is 2 after an undo');
+    equal(get(obj, 'redoCount'), 0, 'redoCount is 0 after an undo');
+
+    obj.redo();
+
+    equal(get(obj, 'undoCount'), 2, 'undoCount is 2 after an undo');
+    equal(get(obj, 'redoCount'), 0, 'redoCount is 0 after an undo');
+});
+
+test("change when mementoSize is changed",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+        str: 'hansi'
+    });
+
+    equal(get(obj, 'undoCount'), 0, 'precond - undoCount is initially 0');
+    equal(get(obj, 'redoCount'), 0, 'precond - redoCount is initially 0');
+
+    set(obj, 'str', 'frozen banana');
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is 1 when a undo can be done');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+
+    set(obj, 'str', 'hubert');
+
+    equal(get(obj, 'undoCount'), 2, 'undoCount is increased when a property changes');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+
+    set(obj, 'mementoSize', 1);
+
+    equal(get(obj, 'undoCount'), 1, 'undoCount is decreased to 1');
+    equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
+});
+
 module("clearHistory", {
     teardown: cleanObj
 });
