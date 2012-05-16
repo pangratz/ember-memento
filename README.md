@@ -13,56 +13,9 @@ The mixin works with properties of type 'string', 'number', 'boolean' and 'array
 Use it in your objects which shall offer the functionality like this, see [JSFiddle](http://jsfiddle.net/pangratz666/Dbvhe/):
 
 ```javascript
-var myObj = Ember.Object.create(Ember.Memento, {
-  // properties which are "tracked"
-  mementoProperties: 'firstName age tags'.w(),
-
-  tags: ['cool', 'great'],
-  firstName: 'Buster',
-  age: 78
+var obj = Ember.Object.create(Ember.Memento, {
+    mementoProperties: 'firstName lastName age tags'
 });
-
-myObj.get('tags').pushObject('super');
-myObj.set('firstName', 'Michael');
-myObj.set('age', 100);
-
-myObj.undo(); // firstName = Michael, age = 78, tags = [cool, great, super]
-myObj.undo(); // firstName = Buster, age 78, tags = [cool, great, super]
-myObj.undo(); // firstName = Buster, age 78, tags = [cool, great]
-
-myObj.redo(); // firstName = Buster, age 78, tags = [cool, great, super]
-myObj.redo(); // firstName = Michael, age 78, tags = [cool, great, super]
-myObj.redo(); // firstName = Michael, age 100, tags = [cool, great, super]
-```
-
-You can clear the history by invoking the `clearHistory` method. You can specify the amount of history items which shall be kept:
-
-```javascript
-var myObj = Ember.Object.create(Ember.Memento, {
-  mementoProperties: ['name'],
-
-  name: 'Tobias'
-});
-
-myObj.set('name', 'Tobias Fünke');
-myObj.set('name', 'Nelly');
-
-myObj.clearHistory(1);
-myObj.get('name'); // Nelly
-
-myObj.undo();
-myObj.get('name'); // Tobias Fünke
-
-// no history beyond this ...
-myObj.undo();
-myObj.get('name'); // Tobias Fünke
-
-myObj.redo(); // name === Nelly
-
-myObj.clearHistory(); // clear the whole history
-
-myObj.undo();
-myObj.get('name'); // Nelly
 ```
 
 Development
