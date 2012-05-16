@@ -6,7 +6,7 @@ A mixin for Ember.js which adds undo/redo functionality to `Ember.Object`'s.
 Added functionality to an object with the `Ember.Memento` mixin:
 
 * [undo](#undo) and [redo](#redo) functionality
-* mementoSize to limit amount of saved history states
+* [mementoSize](#mementosize) to limit amount of saved history states
 * [clearHistory](#clearhistory) to clear history and optionally keep a given amount of states
 * [updateProperties](#updateproperties) to update multiple properties and only keep 1 history state
 
@@ -24,9 +24,6 @@ var obj = Ember.Object.create(Ember.Memento, {
     // array of properties which shall be considered in undo/redo
     mementoProperties: 'firstName lastName age tags',
 
-    // limit to 2 history states - there is no limit by default
-    mementoSize: 2,
-
     firstName: 'Buster',
     age: 35,
     tags: ['cartographer']
@@ -36,7 +33,7 @@ var obj = Ember.Object.create(Ember.Memento, {
 obj.getProperties('firstName lastName age tags'.w());
 ```
 
-Properties are modified via Ember.js `setter`'s
+Properties are modified as usual via Ember.js `setter`'s
 
 ```javascript
 obj.set('lastName', 'Bluth');
@@ -64,12 +61,6 @@ obj.undo();
 // firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer']
 obj.getProperties('firstName lastName age tags'.w());
 
-// invoke undo one more time; this doesn't change anything since we specified mementoSize = 2
-obj.undo();
-
-// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer']
-obj.getProperties('firstName lastName age tags'.w());
-
 // check if an undo is possible
 if (obj.get('canUndo')) {
     ...
@@ -84,7 +75,7 @@ var numOfPossibleUndos = obj.get('undoCount');
 To redo a change, simply call `redo` on the object:
 
 ```javascript
-// redo change and readd 'step-brother'
+// redo change and re-add 'step-brother'
 obj.redo();
 
 // firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
@@ -103,7 +94,24 @@ if (obj.get('canRedo')) {
 
 // get the number of steps which can be reverted
 var numOfPossibleRedos = obj.get('redoCount');
+```
 
+#### mementoSize
+
+By specifying a property `mementoSize` you define how many history states should be remembered. By default, the whole history is saved:
+
+```javascript
+// only save the latest 2 history states
+obj.set('mementoSize', 2);
+
+obj.set('firstName', 'Tobias');
+obj.set('firstName', 'Tobias Fünke');
+obj.set('firstName', 'Dr. Tobias Fünke');
+obj.set('firstName', 'Nelly');
+
+obj.undo(); // firstName = 'Dr. Tobias Fünke'
+obj.undo(); // firstName = 'Tobias Fünke'
+obj.get('canUndo'); // false
 ```
 
 #### clearHistory
@@ -111,35 +119,40 @@ var numOfPossibleRedos = obj.get('redoCount');
 The history can be cleared via `clearHistory` method. If no parameter is specified, the whole history is cleared. You can also pass the number of history items which shall be kept:
 
 ```javascript
+obj.set('firstName', 'Tobias');
+obj.set('firstName', 'Tobias Fünke');
+
 // compact history and only keep 1 item
 obj.clearHistory(1);
 
-obj.undo(); // changes firstName to 'Buster'
+obj.undo(); // changes firstName to 'Tobias'
 obj.undo(); // does nothing since there are no more history items
-
-// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
-obj.getProperties('firstName lastName age tags'.w());
 ```
 
 #### updateProperties
 
 To change multiple properties and only add 1 history item, use the `updateProperties` method:
+obj.set('firstName', 'Buster');
+obj.set('age', 100);
 
 ```javascript
+obj.set('firstName', 'Buster');
+obj.set('age', 100);
+
 // update multiple properties at once, but create only 1 histroy item
 obj.updateProperties({
-    firstName: 'Hey Brother Buster',
+    firstName: 'Baby Buster',
     age: 42
 });
 
-// firstName = 'Hey Brother Buster', lastName = 'Bluth', age = 42, tags = ['cartographer', 'step-brother']
-obj.getProperties('firstName lastName age tags'.w());
+// firstName = 'Baby Buster', age = 42
+obj.getProperties('firstName age'.w());
 
 // undo last change
 obj.undo();
 
-// firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
-obj.getProperties('firstName lastName age tags'.w());
+// firstName = 'Buster', age = 100
+obj.getProperties('firstName age'.w());
 ```
 
 Development
