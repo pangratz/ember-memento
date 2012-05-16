@@ -66,7 +66,7 @@ if (obj.get('canUndo')) {
     ...
 }
 
-// get the number of steps which can be reverted
+// get the number of steps which can be undone
 var numOfPossibleUndos = obj.get('undoCount');
 ```
 
@@ -92,7 +92,7 @@ if (obj.get('canRedo')) {
     ...
 }
 
-// get the number of steps which can be reverted
+// get the number of steps which can be redone
 var numOfPossibleRedos = obj.get('redoCount');
 ```
 
