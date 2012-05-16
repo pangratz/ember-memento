@@ -417,6 +417,93 @@ function() {
     ok(!get(obj, 'arr'), 'arr is not defined after undo');
 });
 
+module("updateProperties", {
+    teardown: cleanObj
+});
+
+test("updates properties and only adds 1 history item",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'firstName lastName'.w(),
+
+        firstName: 'Baby',
+        lastName: 'B.'
+    });
+
+    equal(get(obj, 'firstName'), 'Baby', 'precond - firstName is set');
+    equal(get(obj, 'lastName'), 'B.', 'precond - lastName is set');
+
+    obj.updateProperties({
+        firstName: 'Buster',
+        lastName: 'Bluth'
+    });
+
+    equal(get(obj, 'firstName'), 'Buster', 'updateProperties changes firstName');
+    equal(get(obj, 'lastName'), 'Bluth', 'updateProperties changes lastName');
+
+    obj.undo();
+
+    equal(get(obj, 'firstName'), 'Baby', 'firstName is reset after undo');
+    equal(get(obj, 'lastName'), 'B.', 'lastName is reset after undo');
+
+    obj.redo();
+
+    equal(get(obj, 'firstName'), 'Buster', 'redo changes firstName');
+    equal(get(obj, 'lastName'), 'Bluth', 'redo changes lastName');
+});
+
+test("works with undefined initial values",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'firstName lastName'.w()
+    });
+
+    equal(get(obj, 'firstName'), undefined, 'precond - firstName is undefined');
+    equal(get(obj, 'lastName'), undefined, 'precond - lastName is undefined');
+
+    obj.updateProperties({
+        firstName: 'Buster',
+        lastName: 'Bluth'
+    });
+
+    equal(get(obj, 'firstName'), 'Buster', 'updateProperties changes firstName');
+    equal(get(obj, 'lastName'), 'Bluth', 'updateProperties changes lastName');
+
+    obj.undo();
+
+    equal(get(obj, 'firstName'), undefined, 'firstName is undefined after undo');
+    equal(get(obj, 'lastName'), undefined, 'lastName is undefined after undo');
+
+    obj.redo();
+
+    equal(get(obj, 'firstName'), 'Buster', 'redo changes firstName');
+    equal(get(obj, 'lastName'), 'Bluth', 'redo changes lastName');
+});
+
+test("works with arrays",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'array'.w(),
+
+        array: [42]
+    });
+
+    deepEqual(get(obj, 'array'), [42], 'precond - array is defined');
+
+    obj.updateProperties({
+        array: [1, 2, 3]
+    });
+
+    deepEqual(get(obj, 'array'), [1, 2, 3], 'updateProperties changes array');
+
+    obj.undo();
+
+    deepEqual(get(obj, 'array'), [42], 'array is reset after undo');
+
+    obj.redo();
+
+    deepEqual(get(obj, 'array'), [1, 2, 3], 'redo changes array');
+});
 
 module("clearHistory", {
     teardown: cleanObj

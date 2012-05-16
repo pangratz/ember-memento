@@ -71,6 +71,26 @@ Ember.Memento = Ember.Mixin.create({
         }
     },
 
+    updateProperties: function(hash) {
+        var keys = Ember.keys(hash);
+        var currentValues = this.getProperties(keys);
+        this.set('_isUpdateProperties', true);
+        this.setProperties(hash);
+        this.set('_isUpdateProperties', false);
+
+        var obj = this;
+        this._addHistory({
+            undoDescription: 'set keys %@ to "%@"'.fmt(keys, JSON.stringify(currentValues)),
+            redoDescription: 'set keys %@ to %@'.fmt(keys, JSON.stringify(hash)),
+            undo: function() {
+                obj.setProperties(currentValues);
+            },
+            redo: function() {
+                obj.setProperties(hash);
+            }
+        });
+    },
+
     /**
      * Go back in time
      */
@@ -139,6 +159,10 @@ Ember.Memento = Ember.Mixin.create({
             val.addArrayObserver(this);
         }
 
+        if (this.get('_isUpdateProperties')) {
+            return;
+        }
+
         var beforeValue = Ember.get(this, '_beforeValue');
         this._addHistory({
             undoDescription: 'set %@ to "%@"'.fmt(propName, beforeValue),
@@ -154,7 +178,7 @@ Ember.Memento = Ember.Mixin.create({
 
     arrayWillChange: function(array, startIndex, rmCount, addCount) {
         // check if some elements will be removed from array
-        if (rmCount !== 0) {
+        if (rmCount !== 0 && !this.get('_isUpdateProperties')) {
             var elements = array.slice(startIndex, startIndex + rmCount);
             this._addHistory({
                 undoDescription: 'add %@ elements [%@] at %@'.fmt(rmCount, elements, startIndex),
@@ -170,7 +194,7 @@ Ember.Memento = Ember.Mixin.create({
     },
     arrayDidChange: function(array, startIndex, rmCount, addCount) {
         // check if some elements have been added to array
-        if (addCount !== 0) {
+        if (addCount !== 0 && !this.get('_isUpdateProperties')) {
             var elements = array.slice(startIndex, startIndex + addCount);
             this._addHistory({
                 undoDescription: 'remove %@ elements [%@] at %@'.fmt(addCount, elements, startIndex),
