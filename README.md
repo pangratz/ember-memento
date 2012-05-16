@@ -8,6 +8,7 @@ Added functionality to an object with the `Ember.Memento` mixin:
 * [undo](#undo) and [redo](#redo) functionality
 * mementoSize to limit amount of saved history states
 * [clearHistory](#clearhistory) to clear history and optionally keep a given amount of states
+* [updateProperties](#updateproperties) to update multiple properties and only keep 1 history state
 
 Usage
 -----
@@ -102,6 +103,8 @@ obj.undo(); // does nothing since there are no more history items
 // firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
 obj.getProperties('firstName lastName age tags'.w());
 ```
+
+#### updateProperties
 
 To change multiple properties and only add 1 history item, use the `updateProperties` method:
 
