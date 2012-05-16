@@ -3,6 +3,12 @@ Ember-Memento [![Build Status](https://secure.travis-ci.org/pangratz/ember-memen
 
 A mixin for Ember.js which adds undo/redo functionality to `Ember.Object`'s.
 
+Added functionality to an object with the `Ember.Memento` mixin:
+
+* [undo](#undo) and [redo](#redo) functionality
+* mementoSize to limit amount of saved history states
+* [clearHistory](#clearHistory) to clear history and optionally keep a given amount of states
+
 Usage
 -----
 
@@ -40,6 +46,8 @@ obj.set('firstName', 'Baby Buster');
 obj.getProperties('firstName lastName age tags'.w());
 ```
 
+#### undo
+
 To undo a change, simply call `undo` on the object:
 
 ```javascript
@@ -62,6 +70,8 @@ obj.undo();
 obj.getProperties('firstName lastName age tags'.w());
 ```
 
+#### redo
+
 To redo a change, simply call `redo` on the object:
 
 ```javascript
@@ -77,6 +87,8 @@ obj.redo();
 // firstName = 'Baby Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
 obj.getProperties('firstName lastName age tags'.w());
 ```
+
+#### clearHistory
 
 The history can be cleared via `clearHistory` method. If no parameter is specified, the whole history is cleared. You can also pass the number of history items which shall be kept:
 
