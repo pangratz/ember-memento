@@ -69,6 +69,14 @@ obj.undo();
 
 // firstName = 'Buster', lastName = 'Bluth', age = 35, tags = ['cartographer']
 obj.getProperties('firstName lastName age tags'.w());
+
+// check if an undo is possible
+if (obj.get('canUndo')) {
+    ...
+}
+
+// get the number of steps which can be reverted
+var numOfPossibleUndos = obj.get('undoCount');
 ```
 
 #### redo
@@ -87,6 +95,15 @@ obj.redo();
 
 // firstName = 'Baby Buster', lastName = 'Bluth', age = 35, tags = ['cartographer', 'step-brother']
 obj.getProperties('firstName lastName age tags'.w());
+
+// check if a redo is possible
+if (obj.get('canRedo')) {
+    ...
+}
+
+// get the number of steps which can be reverted
+var numOfPossibleRedos = obj.get('redoCount');
+
 ```
 
 #### clearHistory
