@@ -1,4 +1,5 @@
 Ember.Memento = Ember.Mixin.create({
+
     // holds all history items
     _memento: [],
 
@@ -8,6 +9,16 @@ Ember.Memento = Ember.Mixin.create({
     * _mementoIndex represents the future
     */
     _mementoIndex: -1,
+
+    undoCount: function() {
+        return this.get('_mementoIndex') + 1;
+    }.property('_mementoIndex').cacheable(),
+
+    redoCount: function() {
+        var length = this.getPath('_memento.length');
+        var mementoIndex = this.get('_mementoIndex');
+        return length - mementoIndex - 1;
+    }.property('_mementoIndex', '_memento.length').cacheable(),
 
     _mementoSizeChanged: function() {
         this._updateMemento();
@@ -123,6 +134,9 @@ Ember.Memento = Ember.Mixin.create({
     },
 
     init: function() {
+        this.set('_memento', []);
+        this.set('_mementoIndex', -1);
+
         // iterate over all mementoProperties and add observers
         var props = this.get('mementoProperties');
         props.forEach(function(item) {
