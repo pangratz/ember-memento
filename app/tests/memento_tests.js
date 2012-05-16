@@ -635,6 +635,57 @@ function() {
     equal(get(obj, 'redoCount'), 0, 'redoCount stays 0');
 });
 
+module("canUndo AND canRedo", {
+    teardown: cleanObj
+});
+
+test("they are true when a undo/redo is possible",
+function() {
+    obj = Ember.Object.create(Ember.Memento, {
+        mementoProperties: 'str'.w(),
+
+        str: 'frozen'
+    });
+
+    equal(get(obj, 'canUndo'), false);
+    equal(get(obj, 'canRedo'), false);
+
+    set(obj, 'str', 'banana');
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), false);
+
+    set(obj, 'str', 'Frozen Banana');
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), false);
+
+    obj.undo();
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), true);
+
+    obj.undo();
+
+    equal(get(obj, 'canUndo'), false);
+    equal(get(obj, 'canRedo'), true);
+
+    obj.redo();
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), true);
+
+    obj.redo();
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), false);
+
+    obj.redo();
+
+    equal(get(obj, 'canUndo'), true);
+    equal(get(obj, 'canRedo'), false);
+});
+
 module("clearHistory", {
     teardown: cleanObj
 });

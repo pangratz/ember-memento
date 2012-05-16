@@ -20,6 +20,14 @@ Ember.Memento = Ember.Mixin.create({
         return length - mementoIndex - 1;
     }.property('_mementoIndex', '_memento.length').cacheable(),
 
+    canUndo: function() {
+        return this.get('undoCount') > 0;
+    }.property('undoCount').cacheable(),
+
+    canRedo: function() {
+        return this.get('redoCount') > 0;
+    }.property('redoCount').cacheable(),
+
     _mementoSizeChanged: function() {
         this._updateMemento();
     }.observes('mementoSize'),
