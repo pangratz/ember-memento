@@ -1,11 +1,13 @@
 /**
- * QUnit v1.4.0 - A JavaScript Unit Testing Framework
+ * QUnit v1.7.0pre - A JavaScript Unit Testing Framework
  *
  * http://docs.jquery.com/QUnit
  *
  * Copyright (c) 2012 John Resig, Jörn Zaefferer
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * or GPL (GPL-LICENSE.txt) licenses.
+ * Pulled Live from Git Tue May 22 16:55:01 UTC 2012
+ * Last Commit: f08dc894391c856fc9cfe715ec2198fab9af60d9
  */
 
 /** Font Family and Sizes */
@@ -56,6 +58,7 @@
 
 #qunit-header label {
 	display: inline-block;
+	padding-left: 0.5em;
 }
 
 #qunit-banner {
@@ -219,6 +222,9 @@
 	background-color: #D2E0E6;
 
 	border-bottom: 1px solid white;
+}
+#qunit-testresult .module-name {
+	font-weight: bold;
 }
 
 /** Fixture */
