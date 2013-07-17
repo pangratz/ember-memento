@@ -22,7 +22,7 @@ Use it in your objects which shall offer the functionality like this, see [JSFid
 ```javascript
 var obj = Ember.Object.create(Ember.Memento, {
     // array of properties which shall be considered in undo/redo
-    mementoProperties: 'firstName lastName age tags',
+    mementoProperties: 'firstName lastName age tags'.w(),
 
     firstName: 'Buster',
     age: 35,
